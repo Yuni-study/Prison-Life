@@ -30,13 +30,19 @@ public class CoalSource : MonoBehaviour
         {
             if (stacker != null)
             {
-                // 플레이어에게 석탄을 추가해달라고 요청
-                bool success = stacker.AddResource(coalPrefab);
-                
-                // 만약 꽉 찼다면 잠시 대기하거나 루프를 멈출 수 있음
-                if (!success) yield return new WaitForSeconds(1f); 
+                if (stacker.IsFull()) 
+                {
+                    stacker.ShowMaxText();
+                    yield return new WaitForSeconds(1f);
+                }
+                else
+                {
+                    GameObject newCoal = Instantiate(coalPrefab);
+                    stacker.AddItemToList(newCoal, "Coal");
+                }
             }
-            yield return new WaitForSeconds(mineInterval);
+            // UpgradeManager에서 현재 속도를 가져옴
+            yield return new WaitForSeconds(UpgradeManager.Instance.GetCurrentMineInterval());
         }
     }
 }

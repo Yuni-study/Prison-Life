@@ -7,6 +7,9 @@ TagManager:
   - Coal
   - Handcuff
   - OutputArea
+  - DeliveryArea
+  - Prisoner
+  - Money
   layers:
   - Default
   - TransparentFX
