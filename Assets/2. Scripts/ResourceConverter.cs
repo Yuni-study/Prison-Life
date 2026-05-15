@@ -24,6 +24,13 @@ public class ResourceConverter : MonoBehaviour
     // 플레이어를 기억하기 위한 변수
     private PlayerStacker playerInInput;
 
+    public static ResourceConverter Instance; // 싱글톤 추가
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
+
     // --- 외부(자식 트리거)에서 호출해줄 함수들 ---
     // 입력을 시작하거나 멈추는 함수 (ConverterInput에서 호출)
     public void SetPlayerInInput(PlayerStacker player)
@@ -105,6 +112,7 @@ public class ResourceConverter : MonoBehaviour
     void SpawnHandcuff()
     {
         GameObject newHandcuff = Instantiate(handcuffPrefab, outputPoint);
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.outputClip);
         newHandcuff.tag = "Handcuff";
 
         // 쌓이는 위치 계산
@@ -126,4 +134,16 @@ public class ResourceConverter : MonoBehaviour
         }
         return null;
     }
+
+    public void ReceiveResourceFromWorker()
+    {
+        if (producedHandcuffs.Count + pendingConversions < maxOutputStack)
+        {
+            pendingConversions++;
+            StartCoroutine(ConvertLogic());
+        }
+    }
+
+    // 직원이 수갑을 가져갈 수 있는지 확인하는 함수
+    public bool HasHandcuffs() => producedHandcuffs.Count > 0;
 }

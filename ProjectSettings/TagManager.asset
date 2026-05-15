@@ -10,6 +10,8 @@ TagManager:
   - DeliveryArea
   - Prisoner
   - Money
+  - ResourceNode
+  - Staff
   layers:
   - Default
   - TransparentFX

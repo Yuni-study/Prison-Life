@@ -30,6 +30,9 @@ public class UpgradeManager : MonoBehaviour
     public int capacityLevel = 1;
     public int[] maxCapacities = { 20, 30, 45, 60, 80 }; // 레벨별 최대 소지량
 
+    [Header("Final Unlock")]
+    public GameObject prisonUpgradeZone; // 감옥 업그레이드 발판 오브젝트
+
     void Awake()
     {
         Instance = this;
@@ -42,6 +45,8 @@ public class UpgradeManager : MonoBehaviour
         {
             mineLevel++;
             Debug.Log($"채굴 업그레이드! 현재 레벨: {mineLevel}");
+
+            CheckAllUpgradesMax();
         }
     }
 
@@ -52,6 +57,8 @@ public class UpgradeManager : MonoBehaviour
             capacityLevel++;
             stacker.maxCapacity = maxCapacities[capacityLevel - 1];
             Debug.Log($"소지량 업그레이드! 현재 최대치: {stacker.maxCapacity}");
+
+            CheckAllUpgradesMax();
         }
     }
 
@@ -62,6 +69,9 @@ public class UpgradeManager : MonoBehaviour
         {
             upgradeLevel++;
             ApplyUpgradeEffects();
+
+            // [추가] 캐릭터 업그레이드가 끝났을 때도 최종 해금 조건인지 확인해야 합니다.
+            CheckAllUpgradesMax();
         }
     }
 
@@ -91,5 +101,33 @@ public class UpgradeManager : MonoBehaviour
     {
         // 기본 0.5초에서 레벨당 0.2초씩 단축
         return Mathf.Max(0.1f, 0.5f - (upgradeLevel * 0.2f));
+    }
+
+    public void CheckAllUpgradesMax()
+    {
+        // mineLevel이 5일 때 (배열 길이 5와 같음) MAX
+        bool isMineMax = (mineLevel >= mineIntervals.Length);
+        
+        // capacityLevel이 5일 때 (배열 길이 5와 같음) MAX
+        bool isCapMax = (capacityLevel >= maxCapacities.Length);
+        
+        // upgradeLevel이 2일 때 MAX
+        bool isPlayerMax = (upgradeLevel >= 2); 
+
+        // 디버깅을 위해 로그를 찍어보세요. 어느 것이 false인지 알 수 있습니다.
+        Debug.Log($"상태 체크 - 광산: {isMineMax}, 가방: {isCapMax}, 캐릭터: {isPlayerMax}");
+
+        if (isMineMax && isCapMax && isPlayerMax)
+        {
+            if (prisonUpgradeZone != null)
+            {
+                prisonUpgradeZone.SetActive(true); 
+                Debug.Log("모든 인프라 업그레이드 완료! 최종 감옥 확장 가능.");
+            }
+            else
+            {
+                Debug.LogError("prisonUpgradeZone 오브젝트가 인스펙터에서 할당되지 않았습니다!");
+            }
+        }
     }
 }

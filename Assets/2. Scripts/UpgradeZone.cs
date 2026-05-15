@@ -9,9 +9,16 @@ public class UpgradeZone : MonoBehaviour
     [Header("Cost Settings")]
     public int upgradeCost = 500;
     public int currentPaid = 0; // 현재까지 지불된 금액
+    public ZoneUI zoneUI; // UI 스크립트 연결
 
     private bool isPlayerInside = false;
     private PlayerStacker playerStacker;
+
+    void Start()
+    {
+        // 시작할 때 UI 초기화
+        if(zoneUI != null) zoneUI.UpdateUI(currentPaid, upgradeCost);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,9 +50,13 @@ public class UpgradeZone : MonoBehaviour
 
             if (moneyItem != null)
             {
+                playerStacker.AddMoney(-100); // 돈 하나당 100원으로 가정
                 // 돈이 업그레이드 패드로 날아가는 연출
                 StartCoroutine(FlyToZone(moneyItem));
                 currentPaid += 100; // 돈 하나당 가치 (기획에 따라 수정)
+
+                // UI 업데이트
+                if(zoneUI != null) zoneUI.UpdateUI(currentPaid, upgradeCost);
 
                 if (currentPaid >= upgradeCost)
                 {
