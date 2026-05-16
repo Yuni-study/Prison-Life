@@ -1251,6 +1251,9 @@ MonoBehaviour:
   verticalOffset: 0.25
   horizontalOffset: 0.6
   maxCapacity: 10
+  maxCoalCapacity: 20
+  maxMoneyCapacity: 20
+  maxHandcuffCapacity: 20
   maxTextUI: {fileID: 787862240}
   currentMoney: 0
 --- !u!136 &455432565
@@ -1967,6 +1970,7 @@ GameObject:
   - component: {fileID: 787862241}
   - component: {fileID: 787862243}
   - component: {fileID: 787862242}
+  - component: {fileID: 787862244}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -2127,6 +2131,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &787862244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787862240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d521dfb5275ef54ca5a232fa318df42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &798667857
 PrefabInstance:
   m_ObjectHideFlags: 0
