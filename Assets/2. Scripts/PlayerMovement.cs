@@ -41,7 +41,6 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Move();
         _Move();
         _Rotation();
     }
@@ -49,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     private void _CheckInput()
     {
         _inputVector = new Vector2(joystick.Horizontal, joystick.Vertical);
-        Debug.Log($"_inputVector = {_inputVector}");
+        // Debug.Log($"_inputVector = {_inputVector}");
         _CheckMovementState();
     }
 
