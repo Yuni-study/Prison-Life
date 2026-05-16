@@ -31,6 +31,14 @@ public class PlayerStacker : MonoBehaviour
 
     private Coroutine collectionCoroutine;
 
+    [Header("Sway Settings")]
+    public float swayIntensity = 0.05f; // 휘어지는 강도 
+    public float swayMaxAngle = 15.0f; // 최대 휘어짐 제한 
+    public float returnSpeed = 5.0f; // 원래대로 돌아오는 복원 속도 
+
+    private Vector3 previousPosition; // 이전 프레임 위치 
+    private Vector3 moveVelocity; // 플레이어 실제 이동 속도 벡터 
+
     private int TotalCount => coalList.Count + moneyList.Count + handcuffList.Count;
 
     // 현재 소지하고 있는 모든 아이템(석탄, 돈, 수갑)의 총합을 반환
@@ -38,9 +46,6 @@ public class PlayerStacker : MonoBehaviour
     {
         return coalList.Count + moneyList.Count + handcuffList.Count;
     }
-
-    [Header("Economy")]
-    public int currentMoney = 0;
 
     public bool IsFull() => TotalCount >= maxCapacity;
     public bool IsFull(string tag)
@@ -73,6 +78,30 @@ public class PlayerStacker : MonoBehaviour
         pointOrderList.Add(coalPoint);
         pointOrderList.Add(moneyPoint);
         pointOrderList.Add(handcuffPoint);
+
+        previousPosition = transform.position;
+    }
+
+    private void Update()
+    {
+        // 1. 프레임간 위치 변화를 바탕으로 이동 속도 벡터 계산 (X, Z축만 사용)
+        Vector3 currentPos = transform.position;
+        Vector3 rawVelocity = (currentPos - previousPosition) / Time.deltaTime;
+        
+        // Y축 높이 변화는 무시하고 수평 이동만 계산
+        rawVelocity.y = 0; 
+
+        // 속도 변화를 부드럽게 보간 (급격하게 튀는 현상 방지)
+        moveVelocity = Vector3.Lerp(moveVelocity, rawVelocity, Time.deltaTime * returnSpeed);
+        previousPosition = currentPos;
+
+        Vector3 localVelocity = transform.InverseTransformDirection(moveVelocity);
+
+        // 2. 이동 중일 때 실시간으로 아이템들의 포물선 위치 업데이트
+        if (TotalCount > 0)
+        {
+            UpdateAllLayouts(localVelocity);
+        }
     }
 
     // new
@@ -189,7 +218,7 @@ public class PlayerStacker : MonoBehaviour
         }
 
         // 4. 즉시 레이아웃 업데이트
-        UpdateAllLayouts();
+        UpdateAllLayouts(Vector3.zero);
     }
 
     public void ShowMaxText() 
@@ -275,28 +304,54 @@ public class PlayerStacker : MonoBehaviour
     }
 
     // 핵심: 모든 구역의 위치와 아이템들의 위치를 재정렬
-    public void UpdateAllLayouts()
+    public void UpdateAllLayouts(Vector3 localVelocity)
     {
         // 1. 석탄 (중앙)
-        SortZone(coalList);
+        SortZone(coalList, localVelocity);
 
         // 2. 돈 (왼쪽)
-        SortZone(moneyList);
+        SortZone(moneyList, localVelocity);
 
         // 3. 수갑 (오른쪽)
-        SortZone(handcuffList);
+        SortZone(handcuffList, localVelocity);
     }
 
-    private void SortZone(List<GameObject> list)
+    private void SortZone(List<GameObject> list, Vector3 localVelocity)
     {
-        for(int i = 0; i < list.Count; i++)
+        for (int i = 0; i < list.Count; i++)
         {
-            if(list[i] == null) continue; 
+            if (list[i] == null) continue;
 
-            Vector3 targetPos = new Vector3(0, i * verticalOffset, 0);
+            float targetY = i * verticalOffset;
 
-            // y축으로 쌓기. 
-            StartCoroutine(SmoothMove(list[i], targetPos, 0.1f));
+            // ★ 핵심 수정: '로컬 속도'의 정반대 방향으로 관성 힘(sway)을 계산합니다.
+            // 캐릭터가 로컬 앞(Z+)으로 가면 오프셋은 뒤(Z-)로, 로컬 오른쪽(X+)으로 가면 오프셋은 왼쪽(X-)이 됩니다.
+            Vector3 swayDirection = -localVelocity * swayIntensity;
+
+            // 위로 갈수록 더 많이 휘어지는 포물선 공식 (기존과 동일)
+            Vector3 swayOffset = swayDirection * (i * 0.5f); 
+
+            // 최종 로컬 목표 위치
+            Vector3 targetPos = new Vector3(swayOffset.x, targetY, swayOffset.z);
+
+            // 프레임 떨림 방지를 위한 부드러운 이동
+            list[i].transform.localPosition = Vector3.Lerp(
+                list[i].transform.localPosition, 
+                targetPos, 
+                Time.deltaTime * 10f
+            );
+
+            // [회전 연출 수정] 회전 역시 로컬 swayDirection을 기반으로 처리하여 방향 통일
+            if (localVelocity.magnitude > 0.1f)
+            {
+                // 로컬 축 기준으로 비스듬히 눕는 회전값 계산
+                Quaternion targetRot = Quaternion.Euler(swayDirection.z * swayMaxAngle, 0, -swayDirection.x * swayMaxAngle);
+                list[i].transform.localRotation = Quaternion.Lerp(list[i].transform.localRotation, targetRot, Time.deltaTime * 10f);
+            }
+            else
+            {
+                list[i].transform.localRotation = Quaternion.Lerp(list[i].transform.localRotation, Quaternion.identity, Time.deltaTime * returnSpeed);
+            }
         }
     }
 
@@ -335,7 +390,7 @@ public class PlayerStacker : MonoBehaviour
             }
             
             // 아이템이 빠졌으므로 즉시 나머지 정렬
-            UpdateAllLayouts();
+            UpdateAllLayouts(Vector3.zero);
 
             return item;
         }

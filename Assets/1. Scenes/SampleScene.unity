@@ -1255,7 +1255,9 @@ MonoBehaviour:
   maxMoneyCapacity: 20
   maxHandcuffCapacity: 20
   maxTextUI: {fileID: 787862240}
-  currentMoney: 0
+  swayIntensity: 0.025
+  swayMaxAngle: 15
+  returnSpeed: 5
 --- !u!136 &455432565
 CapsuleCollider:
   m_ObjectHideFlags: 0
