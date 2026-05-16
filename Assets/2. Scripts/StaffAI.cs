@@ -75,7 +75,7 @@ public class StaffAI : MonoBehaviour
     void CollectHandcuffs()
     {
         // 내 가방이 찰 때까지(IsFull) 혹은 컨버터 수갑이 다 떨어질 때까지 루프
-        while (!myStacker.IsFull() && ResourceConverter.Instance.HasHandcuffs())
+        while (!myStacker.IsFull("Handcuff") && ResourceConverter.Instance.HasHandcuffs())
         {
             GameObject handcuff = ResourceConverter.Instance.TakeHandcuff();
             if (handcuff != null)

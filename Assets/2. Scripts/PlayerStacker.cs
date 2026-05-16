@@ -14,6 +14,9 @@ public class PlayerStacker : MonoBehaviour
     public float verticalOffset = 0.25f; // 위로 쌓이는 간격
     public float horizontalOffset = 0.6f; // 구역 간의 최소 간격
     public int maxCapacity = 20;        // 최대 소지량
+    public int maxCoalCapacity = 20;
+    public int maxMoneyCapacity = 20;
+    public int maxHandcuffCapacity = 20;
 
     // 아이템 종류별 리스트
     private List<GameObject> coalList = new List<GameObject>();
@@ -40,6 +43,20 @@ public class PlayerStacker : MonoBehaviour
     public int currentMoney = 0;
 
     public bool IsFull() => TotalCount >= maxCapacity;
+    public bool IsFull(string tag)
+    {
+        switch (tag)
+        {
+            case "Coal" : 
+                return coalList.Count >= maxCoalCapacity;
+            case "Money" : 
+                return moneyList.Count >= maxMoneyCapacity;
+            case "Handcuff" : 
+                return handcuffList.Count >= maxHandcuffCapacity;
+            default : 
+                return false;
+        }
+    }
 
     private int _currentMoney;
     public int CurrentMoney
@@ -126,11 +143,17 @@ public class PlayerStacker : MonoBehaviour
         if (obj == null) return;
 
         // 1. 소지량 체크
-        if (IsFull())
+        // if (IsFull())
+        // {
+        //     ShowMaxText();
+        //     // 씬에 이미 배치된 오브젝트가 아니라 새로 생성된 프리팹인 경우만 파괴
+        //     if (obj.scene.name == null) Destroy(obj); 
+        //     return;
+        // }
+        if(IsFull(tag))
         {
             ShowMaxText();
-            // 씬에 이미 배치된 오브젝트가 아니라 새로 생성된 프리팹인 경우만 파괴
-            if (obj.scene.name == null) Destroy(obj); 
+            if(obj.scene.name == null) Destroy(obj);
             return;
         }
 
@@ -223,10 +246,16 @@ public class PlayerStacker : MonoBehaviour
     {
         while (true)
         {
-            if (IsFull())
+            // if (IsFull())
+            // {
+            //     ShowMaxText();
+            //     yield return new WaitForSeconds(0.5f); // 꽉 찼을 땐 체크 주기 늦춤
+            //     continue;
+            // }
+            if (IsFull("Handcuff"))
             {
                 ShowMaxText();
-                yield return new WaitForSeconds(0.5f); // 꽉 찼을 땐 체크 주기 늦춤
+                yield return new WaitForSeconds(0.5f); // 수갑 구역이 꽉 찼을 땐 체크 주기 늦춤
                 continue;
             }
 

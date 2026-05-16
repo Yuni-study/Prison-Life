@@ -46,7 +46,12 @@ public class ResourceNode : MonoBehaviour
         // 플레이어가 영역 안에 있고, 노드에 자원이 남아있을 때 반복
         while (isMining && isAvailable && stacker != null)
         {
-            if (stacker.IsFull())
+            // if (stacker.IsFull())
+            // {
+            //     stacker.ShowMaxText();
+            //     yield return new WaitForSeconds(1f); // 꽉 찼을 땐 잠시 대기
+            // }
+            if (stacker.IsFull("Coal"))
             {
                 stacker.ShowMaxText();
                 yield return new WaitForSeconds(1f); // 꽉 찼을 땐 잠시 대기
