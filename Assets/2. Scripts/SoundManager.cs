@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : Singleton_Mono<SoundManager>
 {
-    public static SoundManager Instance;
-
     [Header("Audio Sources")]
     public AudioSource sfxSource;
 
@@ -16,20 +14,6 @@ public class SoundManager : MonoBehaviour
     public AudioClip moneySpawnClip;  // 돈 생성될 때
 
     private bool isMuted = false;
-
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            // 씬이 바뀌어도 파괴되지 않게 하려면 추가 (선택사항)
-            // DontDestroyOnLoad(gameObject); 
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public void PlaySFX(AudioClip clip)
     {

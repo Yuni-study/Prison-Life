@@ -2,10 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton_Mono<UIManager>
 {
-    public static UIManager Instance;
-
     [Header("Money UI")]
     public TextMeshProUGUI moneyText;
 
@@ -13,11 +11,6 @@ public class UIManager : MonoBehaviour
     public Image soundIcon;
     public Sprite soundOnSprite;
     public Sprite soundOffSprite;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-    }
 
     // 돈 업데이트 (PlayerStacker나 다른 곳에서 호출)
     public void UpdateMoneyUI(int amount)

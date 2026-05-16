@@ -187,16 +187,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fde27a52001364140b0df6e192d8383d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coalAnchor: {fileID: 3002838691644987948}
-  moneyAnchor: {fileID: 4290198529456699570}
-  handcuffAnchor: {fileID: 6538301222423477087}
+  stackPoint: {fileID: 1680965598756250122}
+  coalPoint: {fileID: 3002838691644987948}
+  moneyPoint: {fileID: 4290198529456699570}
+  handcuffPoint: {fileID: 6538301222423477087}
   verticalOffset: 0.25
   horizontalOffset: 0.6
   maxCapacity: 20
-  stackPoint: {fileID: 0}
-  stackHeightOffset: 0.25
+  maxCoalCapacity: 20
+  maxMoneyCapacity: 20
+  maxHandcuffCapacity: 20
   maxTextUI: {fileID: 0}
-  currentMoney: 0
+  swayIntensity: 0.05
+  swayMaxAngle: 15
+  returnSpeed: 5
 --- !u!114 &617266711199951758
 MonoBehaviour:
   m_ObjectHideFlags: 0

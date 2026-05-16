@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ResourceConverter : MonoBehaviour
+public class ResourceConverter : Singleton_Mono<ResourceConverter>
 {
     [Header("Speed Settings")]
     public float inputSpeed = 0.05f;  // 자원을 플레이어에게서 가져오는 간격 (초)
@@ -19,26 +19,26 @@ public class ResourceConverter : MonoBehaviour
     private Coroutine inputRoutine;
     private int pendingConversions = 0; // 현재 변환 대기 중인 석탄 개수
 
-    private bool isProcessing = false;
+    // 대기시간 변수 
+    private WaitForSeconds _inputWait;
+    private WaitForSeconds _convertWait;
 
-    // 플레이어를 기억하기 위한 변수
-    private PlayerStacker playerInInput;
-
-    public static ResourceConverter Instance; // 싱글톤 추가
-
-    void Awake()
+    protected override void Awake()
     {
-        if (Instance == null) Instance = this;
+        base.Awake();
+
+        _inputWait = new WaitForSeconds(inputSpeed);
+        _convertWait = new WaitForSeconds(inputSpeed * 2f);
     }
 
     // --- 외부(자식 트리거)에서 호출해줄 함수들 ---
     // 입력을 시작하거나 멈추는 함수 (ConverterInput에서 호출)
-    public void SetPlayerInInput(PlayerStacker player)
+    public void SetPlayerInInput(PlayerStacker playerStacker)
     {
-        if (player != null)
+        if (playerStacker != null)
         {
             if (inputRoutine != null) StopCoroutine(inputRoutine);
-            inputRoutine = StartCoroutine(ProcessInput(player));
+            inputRoutine = StartCoroutine(ProcessInput(playerStacker));
         }
         else
         {
@@ -51,20 +51,20 @@ public class ResourceConverter : MonoBehaviour
     }
 
     // 1. 자원을 빠르게 빨아들이는 루틴
-    IEnumerator ProcessInput(PlayerStacker player)
+    IEnumerator ProcessInput(PlayerStacker playerStacker)
     {
         while (true)
         {
             // 출력 공간이 있고 플레이어가 석탄을 가지고 있다면
-            if (producedHandcuffs.Count + pendingConversions < maxOutputStack && player.HasCoal())
+            if (producedHandcuffs.Count + pendingConversions < maxOutputStack && playerStacker.HasCoal())
             {
-                player.RemoveCoal();       // 플레이어 뒤에서 제거
+                playerStacker.RemoveCoal();       // 플레이어 뒤에서 제거
                 pendingConversions++;      // 변환 대기열 추가
                 
                 // 변환 시작 (비동기로 실행하여 입력을 막지 않음)
                 StartCoroutine(ConvertLogic()); 
                 
-                yield return new WaitForSeconds(inputSpeed); // 투입 속도
+                yield return _inputWait; // 투입 속도
             }
             else
             {
@@ -77,36 +77,10 @@ public class ResourceConverter : MonoBehaviour
     IEnumerator ConvertLogic()
     {
         // 실제 변환 공정 시간 (필요 시 조절)
-        yield return new WaitForSeconds(inputSpeed * 2f); 
+        yield return _convertWait; 
         
         SpawnHandcuff();
         pendingConversions--;
-    }
-
-    void Update()
-    {
-        // 출력 공간이 있고 처리 중이 아닐 때만 체크
-        if (!isProcessing && producedHandcuffs.Count < maxOutputStack)
-        {
-            if (playerInInput != null && playerInInput.HasCoal())
-            {
-                StartCoroutine(ConvertProcess(playerInInput));
-            }
-        }
-    }
-
-    IEnumerator ConvertProcess(PlayerStacker player)
-    {
-        isProcessing = true;
-        
-        // 플레이어에게서 석탄을 즉시 가져옴
-        player.RemoveCoal(); 
-        
-        // 변환 대기 (convertTime만큼 짧게 대기)
-        yield return new WaitForSeconds(convertTime);
-        
-        SpawnHandcuff();
-        isProcessing = false;
     }
 
     void SpawnHandcuff()
