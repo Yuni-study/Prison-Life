@@ -18,9 +18,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Delegate")]
     public Action<bool> OnMovementStateChanged; 
 
-    [Header("Joystick Reference")]
-    // [SerializeField] private FloatingJoystick joystick; // 조이스틱 연결용
-
     [Header("Input System")]
     private PlayerInputActions _playerInputActions;
     private InputAction _inputAction;
@@ -30,10 +27,6 @@ public class PlayerMovement : MonoBehaviour
         _rigid = GetComponent<Rigidbody>();
 
         _rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z축 회전 고정
-
-        // 만약 인스펙터에서 할당을 깜빡했다면 자동으로 찾아주는 방어 코드
-        // if (joystick == null)
-        //     joystick = FindObjectOfType<FloatingJoystick>();
 
         _playerInputActions = new PlayerInputActions();
         _inputAction = _playerInputActions.Player.Move; 
@@ -62,7 +55,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void _CheckInput()
     {
-        // _inputVector = new Vector2(joystick.Horizontal, joystick.Vertical);
         _inputVector = _inputAction.ReadValue<Vector2>(); 
         // Debug.Log($"_inputVector = {_inputVector}");
 

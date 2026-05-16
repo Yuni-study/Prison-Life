@@ -1244,14 +1244,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fde27a52001364140b0df6e192d8383d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coalAnchor: {fileID: 388654356}
-  moneyAnchor: {fileID: 1751234659}
-  handcuffAnchor: {fileID: 2108600945}
+  stackPoint: {fileID: 1892812937}
+  coalPoint: {fileID: 388654356}
+  moneyPoint: {fileID: 1751234659}
+  handcuffPoint: {fileID: 2108600945}
   verticalOffset: 0.25
   horizontalOffset: 0.6
   maxCapacity: 10
-  stackPoint: {fileID: 0}
-  stackHeightOffset: 0.25
   maxTextUI: {fileID: 787862240}
   currentMoney: 0
 --- !u!136 &455432565
@@ -6639,7 +6638,7 @@ Transform:
   m_GameObject: {fileID: 1751234658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.7}
+  m_LocalPosition: {x: 0, y: 0, z: -0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7658,7 +7657,7 @@ Transform:
   m_GameObject: {fileID: 2108600944}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.4}
+  m_LocalPosition: {x: 0, y: 0, z: -1.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
