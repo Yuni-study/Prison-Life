@@ -11,8 +11,6 @@ public class StaffAI : MonoBehaviour
     public Transform outputArea; // ResourceConverter의 수갑 나오는 곳
     public Transform deskArea;   // DeskManager의 수갑 놓는 곳
 
-    private bool isWorking = false;
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();

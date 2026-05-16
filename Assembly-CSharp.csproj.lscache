@@ -88,21 +88,23 @@ Assets/2. Scripts/
  UpgradePrison.cs
  UpgradeZone.cs
  ZoneUI.cs
-Assets/9. Externals/Joystick Pack/Examples/
- JoystickPlayerExample.cs
- JoystickSetterExample.cs
-Assets/9. Externals/Joystick Pack/Scripts/
- Base/Joystick.cs
- Joysticks/
-  DynamicJoystick.cs
-  FixedJoystick.cs
-  FloatingJoystick.cs
-  VariableJoystick.cs
-Assets/9. Externals/Legacy/ithappy/Animals_FREE/Scripts/
- CreatureMover.cs
- MovePlayerInput.cs
- PlayerCamera.cs
- ThirdPersonCamera.cs
+Assets/
+ 8. InputSystem/PlayerInputActions.cs
+ 9. Externals/Joystick Pack/Examples/
+  JoystickPlayerExample.cs
+  JoystickSetterExample.cs
+ 9. Externals/Joystick Pack/Scripts/
+  Base/Joystick.cs
+  Joysticks/
+   DynamicJoystick.cs
+   FixedJoystick.cs
+   FloatingJoystick.cs
+   VariableJoystick.cs
+ 9. Externals/Legacy/ithappy/Animals_FREE/Scripts/
+  CreatureMover.cs
+  MovePlayerInput.cs
+  PlayerCamera.cs
+  ThirdPersonCamera.cs
 Temp/obj/Debug/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]

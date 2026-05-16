@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -18,10 +19,11 @@ public class PlayerMovement : MonoBehaviour
     public Action<bool> OnMovementStateChanged; 
 
     [Header("Joystick Reference")]
-    [SerializeField] private FloatingJoystick joystick; // 조이스틱 연결용
+    // [SerializeField] private FloatingJoystick joystick; // 조이스틱 연결용
 
-    private Vector3 moveInput;
-
+    [Header("Input System")]
+    private PlayerInputActions _playerInputActions;
+    private InputAction _inputAction;
 
     private void Awake()
     {
@@ -30,8 +32,21 @@ public class PlayerMovement : MonoBehaviour
         _rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z축 회전 고정
 
         // 만약 인스펙터에서 할당을 깜빡했다면 자동으로 찾아주는 방어 코드
-        if (joystick == null)
-            joystick = FindObjectOfType<FloatingJoystick>();
+        // if (joystick == null)
+        //     joystick = FindObjectOfType<FloatingJoystick>();
+
+        _playerInputActions = new PlayerInputActions();
+        _inputAction = _playerInputActions.Player.Move; 
+    }
+
+    private void OnEnable()
+    {
+        _inputAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _inputAction.Disable();
     }
 
     void Update()
@@ -47,14 +62,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void _CheckInput()
     {
-        _inputVector = new Vector2(joystick.Horizontal, joystick.Vertical);
+        // _inputVector = new Vector2(joystick.Horizontal, joystick.Vertical);
+        _inputVector = _inputAction.ReadValue<Vector2>(); 
         // Debug.Log($"_inputVector = {_inputVector}");
+
         _CheckMovementState();
     }
 
     private void _CheckMovementState()
     {
         bool currentlyMoving = _inputVector.sqrMagnitude > 0.01f; 
+
         if(_isMoving != currentlyMoving)
         {
             _isMoving = currentlyMoving;
@@ -68,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
         if(!_isMoving) return;
 
         _moveDirection = new Vector3(_inputVector.x, 0.0f, _inputVector.y).normalized; 
+
         _rigid.MovePosition(_rigid.position + _moveDirection * (_moveSpeed * _moveSpeedModifier) * Time.fixedDeltaTime); // 목표지점까지 이동 
     }
 
@@ -77,21 +96,9 @@ public class PlayerMovement : MonoBehaviour
         if(!_isMoving) return;
 
         _lookDirection = new Vector3(_inputVector.x, 0.0f, _inputVector.y);
-        
         Quaternion lookRotation = Quaternion.LookRotation(_lookDirection);
+        
         _rigid.rotation = Quaternion.RotateTowards(_rigid.rotation, lookRotation, (_rotationSpeed * _rotationSpeedModifier) * Time.fixedDeltaTime); // lookRotation 방향으로 부드럽게 회전 
-    }
-
-    private void Move()
-    {
-        // 입력값이 일정 수준 이상일 때만 움직이도록 설정 (데드존)
-        if (moveInput.magnitude >= 0.1f)
-        {
-            _rigid.MovePosition(_rigid.position + moveInput * _moveSpeed * Time.fixedDeltaTime);
-
-            Quaternion targetRotation = Quaternion.LookRotation(moveInput);
-            _rigid.rotation = Quaternion.RotateTowards(_rigid.rotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
-        }
     }
 
     // 안내 UI(가만히 있을 때 나타나는 UI) 출력 

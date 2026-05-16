@@ -85,8 +85,8 @@
                 },
                 {
                     "name": "",
-                    "id": "37e1fdcb-249a-46b0-8913-6e011f5ae6dc",
-                    "path": "<Mouse>/delta",
+                    "id": "e05eae8f-01fd-406e-bc7d-65851bf6ecb7",
+                    "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Mobile",

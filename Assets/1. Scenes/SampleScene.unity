@@ -1163,6 +1163,7 @@ GameObject:
   - component: {fileID: 455432564}
   - component: {fileID: 455432565}
   - component: {fileID: 455432566}
+  - component: {fileID: 455432567}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1231,7 +1232,6 @@ MonoBehaviour:
   _moveSpeedModifier: 1
   _rotationSpeed: 720
   _rotationSpeedModifier: 1
-  joystick: {fileID: 8170153792943759431}
 --- !u!114 &455432564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1298,6 +1298,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &455432567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455432560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 5e06099ce959cd6498c1b17fb49efdb8, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Mobile
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1001 &583241654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4810,7 +4840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7947,6 +7977,7 @@ GameObject:
   - component: {fileID: 8170153792943759424}
   - component: {fileID: 8170153792943759425}
   - component: {fileID: 8170153792943759431}
+  - component: {fileID: 8170153792943759432}
   m_Layer: 5
   m_Name: Floating Joystick
   m_TagString: Untagged
@@ -7973,6 +8004,41 @@ MonoBehaviour:
   snapY: 0
   background: {fileID: 8170153791815804380}
   handle: {fileID: 8170153793237737414}
+--- !u!114 &8170153792943759432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8170153792943759427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d677f1681015749b15c436eec6d880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MovementRange: 50
+  m_DynamicOriginRange: 100
+  m_ControlPath: <Gamepad>/leftStick
+  m_Behaviour: 0
+  m_UseIsolatedInputActions: 0
+  m_PointerDownAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4dca62de-cbc7-4f00-abbd-7fa3817be0b6
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  m_PointerMoveAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 2906fc2f-90f1-4c54-869d-9929291a5b47
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
 --- !u!222 &8170153793237737412
 CanvasRenderer:
   m_ObjectHideFlags: 0
