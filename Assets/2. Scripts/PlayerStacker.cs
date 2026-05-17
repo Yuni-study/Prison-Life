@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using TMPro;
-using UnityEngine.UI;
 
 public class PlayerStacker : MonoBehaviour
 {
@@ -305,7 +304,7 @@ public class PlayerStacker : MonoBehaviour
             }
 
             // 데스크에서 돈을 가져오는 경우
-            other.GetComponentInParent<DeskManager>()?.moneyOnDesk.Remove(other.gameObject);
+            other.GetComponentInParent<Desk>()?.moneyOnDesk.Remove(other.gameObject);
             AddItemToList(other.gameObject, "Money");
 
             AddMoney(Constants.ONEHUNDRED_INTEGER); // 돈 하나당 100원으로 가정

@@ -7,6 +7,7 @@ public static class Constants
     public const float ZERO_FLOAT = 0.0f;
     public const float POINTZEROFIVE = 0.05f;
     public const float POINTONE = 0.1f;
+    public const float POINTONEFIVE = 0.15f;
     public const float POINTTWO = 0.2f;
     public const float POINTFIVE = 0.5f;
     public const float ONE_FLOAT = 1.0f;

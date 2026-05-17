@@ -6,7 +6,7 @@ public class PrisonerManager : MonoBehaviour
     public static PrisonerManager Instance; // 어디서든 접근 가능하게 싱글톤 추가
 
     public GameObject prisonerPrefab;
-    public DeskManager deskManager; 
+    public Desk deskManager; 
     
     [Header("Points")]
     public Transform gatePoint;    // 소환 위치

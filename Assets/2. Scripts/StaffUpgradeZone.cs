@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class StaffUpgradeZone : MonoBehaviour
 {
@@ -19,27 +18,6 @@ public class StaffUpgradeZone : MonoBehaviour
     public float payInterval = 0.05f; // 돈이 나가는 속도
     private float lastPayTime;
 
-    // private void OnTriggerStay(Collider other)
-    // {
-    //     if (isUnlocked) return;
-
-    //     if (other.CompareTag("Player"))
-    //     {
-    //         PlayerStacker player = other.GetComponent<PlayerStacker>();
-    //         if (player.CurrentMoney > 0)
-    //         {
-    //             // 돈 지불 로직 (기존 UpgradePrison과 유사)
-    //             currentPaid += 10; 
-    //             player.CurrentMoney -= 10;
-    //             zoneUI.UpdateUI("HIRE STAFF", unlockCost - currentPaid);
-
-    //             if (currentPaid >= unlockCost)
-    //             {
-    //                 UnlockStaff();
-    //             }
-    //         }
-    //     }
-    // }
     private void OnTriggerStay(Collider other)
     {
         if (isUnlocked) return;
