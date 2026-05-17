@@ -14,11 +14,7 @@ public class MoneyArea : MonoBehaviour
             // 플레이어 조작 멈춤 (필요 시)
             // other.GetComponent<PlayerMovement>().SetCanMove(false);
 
-            CameraDirector.Instance.ShowUpgradeArea(() => {
-                // 가이드 완료 후 다시 조작 가능하게 함
-                // other.GetComponent<PlayerMovement>().SetCanMove(true);
-                Debug.Log("카메라 연출 끝!");
-            });
+            CameraDirector.Instance.ShowArea(CameraType.UpgradeArea);
         }
     }
 }

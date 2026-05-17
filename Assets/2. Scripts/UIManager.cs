@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class UIManager : Singleton_Mono<UIManager>
 {
@@ -11,6 +12,18 @@ public class UIManager : Singleton_Mono<UIManager>
     public Image soundIcon;
     public Sprite soundOnSprite;
     public Sprite soundOffSprite;
+
+    public System.Action<int> OnMoneyChanged;
+
+    private void OnEnable()
+    {
+        OnMoneyChanged += UpdateMoneyUI;
+    }
+
+    private void OnDisable()
+    {
+        OnMoneyChanged -= UpdateMoneyUI;
+    }
 
     // 돈 업데이트 (PlayerStacker나 다른 곳에서 호출)
     public void UpdateMoneyUI(int amount)

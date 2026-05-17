@@ -2,39 +2,74 @@ using UnityEngine;
 using Cinemachine; 
 using System.Collections;
 
-public class CameraDirector : MonoBehaviour
+public enum CameraType
 {
-    public static CameraDirector Instance;
+    Player,
+    UpgradeArea,
+}
 
+public class CameraDirector : Singleton_Mono<CameraDirector>
+{
     [Header("Cinemachine Cameras")]
-    public CinemachineVirtualCamera playerCam;  
-    public CinemachineVirtualCamera upgradeCam; 
+    public CinemachineVirtualCamera playerCamera;
+    public CinemachineVirtualCamera upgradeCamera; 
+    private CinemachineVirtualCamera _targetCamera;
 
-    private void Awake()
+    [Header("Camera Settings")]
+    [SerializeField] private int _activeCameraPriority = 20;
+    [SerializeField] private int _inActiveCameraPriority = 5;
+    [SerializeField] private float _activeCameraDuration = 3.0f;
+    [SerializeField] private float _inActiveCameraDuration = 2.0f;
+
+    private WaitForSeconds _activeDuration;
+    private WaitForSeconds _inActiveDuration;
+
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
+
+        _activeDuration = new WaitForSeconds(_activeCameraDuration);
+        _inActiveDuration = new WaitForSeconds(_inActiveCameraDuration);
     }
 
-    public void ShowUpgradeArea(System.Action onComplete)
+    public void ShowArea(CameraType cameraType)
     {
-        StartCoroutine(CameraSequence(onComplete));
+        _targetCamera = _GetCamera(cameraType);
+
+        if(_targetCamera == null)
+        {
+            Debug.LogWarning($"해당하는 카메라를 찾을 수 없습니다.");
+            return;
+        }
+
+        StartCoroutine(CameraSequence(_targetCamera));
     }
 
-    IEnumerator CameraSequence(System.Action onComplete)
+    private CinemachineVirtualCamera _GetCamera(CameraType cameraType)
+    {
+        switch (cameraType)
+        {
+            case CameraType.Player : 
+                return playerCamera;
+            case CameraType.UpgradeArea : 
+                return upgradeCamera;
+            default : 
+                return null;
+        }
+    }
+
+    IEnumerator CameraSequence(CinemachineVirtualCamera targetCamera)
     {
         // 우선순위를 높여 카메라 전환 
-        upgradeCam.Priority = 20; 
+        targetCamera.Priority = _activeCameraPriority;
 
         // 카메라 전환시간 3초 대기
-        yield return new WaitForSeconds(3.0f);
+        yield return _activeDuration;
 
         // 우선순위를 낮춰 메인 카메라로 전환 
-        upgradeCam.Priority = 5;
+        targetCamera.Priority = _inActiveCameraPriority;
 
         // 카메라 전환시간 2초 대기 
-        yield return new WaitForSeconds(2.0f);
-
-        // 카메라 연출 종료 후 콜백 실행 
-        onComplete?.Invoke();
+        yield return _inActiveDuration;
     }
 }

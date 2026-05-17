@@ -2,20 +2,23 @@ using UnityEngine;
 
 public class ConverterInput : MonoBehaviour
 {
-    private ResourceConverter master;
+    private ResourceConverter _resourceConverter;
 
-    void Start() { master = GetComponentInParent<ResourceConverter>(); }
+    void Start() 
+    { 
+        _resourceConverter = GetComponentInParent<ResourceConverter>(); 
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
-            if(other.TryGetComponent<PlayerStacker>(out PlayerStacker stacker))
-                master.SetPlayerInInput(stacker);
+            if(other.TryGetComponent<PlayerStacker>(out PlayerStacker playerStacker))
+                _resourceConverter.SetPlayerInInput(playerStacker);
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player")) 
-            master.SetPlayerInInput(null);
+            _resourceConverter.SetPlayerInInput(null);
     }
 }
