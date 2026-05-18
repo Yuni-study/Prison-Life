@@ -13,7 +13,7 @@ public class SoundManager : Singleton_Mono<SoundManager>
     public AudioClip prisonerGetClip; // 죄수가 수갑 받을 때
     public AudioClip moneySpawnClip;  // 돈 생성될 때
 
-    private bool isMuted = false;
+    private bool _isMuted = false;
 
     public void PlaySFX(AudioClip clip)
     {
@@ -23,16 +23,16 @@ public class SoundManager : Singleton_Mono<SoundManager>
             return;
         }
 
-        if (isMuted) return;
+        if (_isMuted) return;
         
         sfxSource.PlayOneShot(clip);
     }
 
     public void ToggleMute()
     {
-        isMuted = !isMuted;
-        sfxSource.mute = isMuted;
+        _isMuted = !_isMuted;
+        sfxSource.mute = _isMuted;
     }
 
-    public bool IsMuted() => isMuted;
+    public bool IsMuted() => _isMuted;
 }

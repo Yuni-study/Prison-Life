@@ -12,6 +12,9 @@ public class UIManager : Singleton_Mono<UIManager>
     public Sprite soundOnSprite;
     public Sprite soundOffSprite;
 
+    [Header("Idle UI")]
+    public GameObject idleUI;
+
     public System.Action<int> OnMoneyChanged;
 
     private void OnEnable()
@@ -41,5 +44,24 @@ public class UIManager : Singleton_Mono<UIManager>
             soundIcon.sprite = soundOffSprite;
         else
             soundIcon.sprite = soundOnSprite;
+    }
+
+    public void ShowIdleUI()
+    {
+        idleUI.SetActive(true);
+    }
+
+    public void CloseIdleUI()
+    {
+        idleUI.SetActive(false);
+    }
+
+    public bool IsIdleUIClose()
+    {
+        if (!idleUI.activeSelf)
+        {
+            return true;
+        }
+        return false;
     }
 }

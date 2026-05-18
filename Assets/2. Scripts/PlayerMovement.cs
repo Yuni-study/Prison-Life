@@ -22,6 +22,9 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInputActions _playerInputActions;
     private InputAction _inputAction;
 
+    private float _idleTimer;
+    private float _duration;
+
     private void Awake()
     {
         _rigid = GetComponent<Rigidbody>();
@@ -30,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
 
         _playerInputActions = new PlayerInputActions();
         _inputAction = _playerInputActions.Player.Move; 
+
+        _duration = Constants.THREE_FLOAT;
     }
 
     private void OnEnable()
@@ -63,7 +68,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void _CheckMovementState()
     {
-        bool currentlyMoving = _inputVector.sqrMagnitude > 0.01f; 
+        bool currentlyMoving = _inputVector.sqrMagnitude > Constants.POINTZEROONE;
+        if (!currentlyMoving)
+        {
+            _idleTimer += Time.deltaTime;
+
+            // 3초간 움직이지 않으면 
+            if(_idleTimer >= _duration)
+            {
+                _idleTimer = Constants.ZERO_FLOAT;
+
+                // Idle UI 활성화 
+                UIManager.Instance.ShowIdleUI();
+            }
+        }
+        else
+        {
+            if (!UIManager.Instance.IsIdleUIClose())
+            {
+                UIManager.Instance.CloseIdleUI();
+            }
+        }
 
         if(_isMoving != currentlyMoving)
         {
@@ -91,12 +116,5 @@ public class PlayerMovement : MonoBehaviour
         Quaternion lookRotation = Quaternion.LookRotation(_lookDirection);
         
         _rigid.rotation = Quaternion.RotateTowards(_rigid.rotation, lookRotation, (_rotationSpeed * _rotationSpeedModifier) * Time.fixedDeltaTime); // lookRotation 방향으로 부드럽게 회전 
-    }
-
-    // 안내 UI(가만히 있을 때 나타나는 UI) 출력 
-    private void HandleIdleUI()
-    {
-        // 플레이어가 가만히 있는지 확인하는 로직이 들어갈 자리입니다.
-        // moveInput.magnitude가 0이면 가만히 있는 상태겠죠?
     }
 }

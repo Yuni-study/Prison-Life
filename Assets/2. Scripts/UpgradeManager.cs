@@ -33,7 +33,7 @@ public class UpgradeManager : MonoBehaviour
     [Header("Final Unlock")]
     public GameObject prisonUpgradeZone; // 감옥 업그레이드 발판 오브젝트
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
         // stacker = GetComponent<PlayerStacker>();
@@ -68,14 +68,14 @@ public class UpgradeManager : MonoBehaviour
         if (upgradeLevel < 2)
         {
             upgradeLevel++;
-            ApplyUpgradeEffects();
+            _ApplyUpgradeEffects();
 
             // [추가] 캐릭터 업그레이드가 끝났을 때도 최종 해금 조건인지 확인해야 합니다.
             CheckAllUpgradesMax();
         }
     }
 
-    private void ApplyUpgradeEffects()
+    private void _ApplyUpgradeEffects()
     {
         // 1. 소지량 10씩 증가
         stacker.maxCapacity += 10;

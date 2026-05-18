@@ -7,11 +7,20 @@ public class HiringZone : MonoBehaviour
     public int currentPaid = 0;
     public GameObject prisonerGroup; 
 
-    public ZoneUI zoneUI; // UI 스크립트 연결
+    public ZoneUI zoneUI; 
     
     private bool isPlayerInside = false;
-    private PlayerStacker playerStacker;
-    private Coroutine paymentCoroutine;
+    private PlayerStacker _playerStacker;
+    private Coroutine _paymentCoroutine;
+
+    private WaitForSeconds _waitDuration1;
+    private WaitForSeconds _waitDuration2;
+
+    private void Awake()
+    {
+        _waitDuration1 = new WaitForSeconds(Constants.POINTFIVE);
+        _waitDuration2 = new WaitForSeconds(Constants.POINTTWO);
+    }
 
     private void Start()
     {
@@ -24,12 +33,12 @@ public class HiringZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInside = true;
-            playerStacker = other.GetComponent<PlayerStacker>();
+            _playerStacker = other.GetComponent<PlayerStacker>();
             
             // 이미 코루틴이 돌고 있지 않을 때만 시작
-            if (paymentCoroutine == null)
+            if (_paymentCoroutine == null)
             {
-                paymentCoroutine = StartCoroutine(PaymentRoutine());
+                _paymentCoroutine = StartCoroutine(_PaymentRoutine());
             }
         }
     }
@@ -39,54 +48,55 @@ public class HiringZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInside = false;
+
             // 구역을 나가면 지불 중단
-            if (paymentCoroutine != null)
+            if (_paymentCoroutine != null)
             {
-                StopCoroutine(paymentCoroutine);
-                paymentCoroutine = null;
+                StopCoroutine(_paymentCoroutine);
+                _paymentCoroutine = null;
             }
         }
     }
 
-    IEnumerator PaymentRoutine()
+    private IEnumerator _PaymentRoutine()
     {
         // 1. 구역에 들어오자마자 바로 뺏지 않도록 약간의 대기시간을 줍니다 (0.5초)
-        yield return new WaitForSeconds(0.5f);
+        yield return _waitDuration1;
 
         while (isPlayerInside && currentPaid < hireCost)
         {
-            if (playerStacker != null)
+            if (_playerStacker != null)
             {
-                GameObject money = playerStacker.PopSpecificItem("Money");
+                GameObject money = _playerStacker.PopSpecificItem("Money");
                 
                 if (money != null)
                 {
-                    playerStacker.AddMoney(-100); // 돈 하나당 100원으로 가정
-                    // 돈이 날아가는 연출 (기존 UpgradeZone의 FlyToZone을 여기도 복사해서 사용 권장)
-                    StartCoroutine(FlyToZone(money));
+                    _playerStacker.AddMoney(-100); // 100원 차감 
+
+                    // 돈이 날아가는 연출 
+                    StartCoroutine(_FlyToZone(money));
                     
-                    currentPaid += 100; // 돈 한 장당 가치
+                    currentPaid += 100; 
 
                     // UI 업데이트
                     if(zoneUI != null) zoneUI.UpdateUI(currentPaid, hireCost);
                     
                     if (currentPaid >= hireCost)
                     {
-                        CompleteHiring();
+                        _CompleteHiring();
                         yield break;
                     }
                 }
             }
             
-            // 2. 지불 간격을 조절합니다 (0.2초마다 하나씩 지불)
-            // 이 값이 너무 작으면 순식간에 다 사라집니다.
-            yield return new WaitForSeconds(0.2f);
+            // 2. 지불 간격 조절
+            yield return _waitDuration2;
         }
         
-        paymentCoroutine = null;
+        _paymentCoroutine = null;
     }
 
-    IEnumerator FlyToZone(GameObject money)
+    private IEnumerator _FlyToZone(GameObject money)
     {
         float elapsed = 0f;
         float duration = 0.3f;
@@ -102,7 +112,7 @@ public class HiringZone : MonoBehaviour
         Destroy(money);
     }
 
-    void CompleteHiring()
+    private void _CompleteHiring()
     {
         if (prisonerGroup != null) prisonerGroup.SetActive(true);
         gameObject.SetActive(false); 

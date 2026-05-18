@@ -42,7 +42,7 @@ public class CameraDirector : Singleton_Mono<CameraDirector>
             return;
         }
 
-        StartCoroutine(CameraSequence(_targetCamera));
+        StartCoroutine(_CameraSequence(_targetCamera));
     }
 
     private CinemachineVirtualCamera _GetCamera(CameraType cameraType)
@@ -58,7 +58,7 @@ public class CameraDirector : Singleton_Mono<CameraDirector>
         }
     }
 
-    IEnumerator CameraSequence(CinemachineVirtualCamera targetCamera)
+    private IEnumerator _CameraSequence(CinemachineVirtualCamera targetCamera)
     {
         // 우선순위를 높여 카메라 전환 
         targetCamera.Priority = _activeCameraPriority;

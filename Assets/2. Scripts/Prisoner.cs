@@ -5,20 +5,24 @@ using UnityEngine.AI;
 public class Prisoner : MonoBehaviour
 {
     public int needHandcuffs; 
-    private NavMeshAgent agent;
+    private NavMeshAgent _agent;
+
+    private WaitForSeconds _waitDuration;
 
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        _agent = GetComponent<NavMeshAgent>();
         // 1~3개 사이의 랜덤한 요구량 설정
         needHandcuffs = Random.Range(1, 4);
         Debug.Log($"요구 수갑 = {needHandcuffs}");
+
+        _waitDuration = new WaitForSeconds(Constants.TWO_FLOAT);
     }
 
     public void SetDestination(Vector3 targetPos)
     {
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-        agent.SetDestination(targetPos);
+        if (_agent == null) _agent = GetComponent<NavMeshAgent>();
+        _agent.SetDestination(targetPos);
     }
 
     // DeskManager에서 호출할 메서드
@@ -27,46 +31,41 @@ public class Prisoner : MonoBehaviour
         // 목적지를 감옥/탈출구로 설정
         SetDestination(escapePos);
 
-        // 5초 뒤에 오브젝트 삭제 (이동할 시간 확보)
-        // Destroy(gameObject, 5f);
-
         // 감옥 도착 후 처리 (옵션)
-        StartCoroutine(ArrivedAtCell());
+        StartCoroutine(_ArrivedAtCell());
     }
 
-    IEnumerator ArrivedAtCell()
+    private IEnumerator _ArrivedAtCell()
     {
         // 목적지 근처에 도착할 때까지 대기
-        while (agent.pathPending || agent.remainingDistance > 0.1f)
+        while (_agent.pathPending || _agent.remainingDistance > Constants.POINTONE)
         {
             yield return null;
         }
         // 도착하면 AI를 끄고 정지 상태 애니메이션으로 변경
-        agent.isStopped = true;
-        agent.enabled = false;
-        // transform.rotation = prisonStartPoint.rotation; // 방향 정렬 필요 시
+        _agent.isStopped = true;
+        _agent.enabled = false;
     }
 
     public void MoveToPrison(Vector3 targetPos, bool isFinalUpgradeDone)
     {
-        agent.SetDestination(targetPos);
+        _agent.SetDestination(targetPos);
         
         // 업그레이드 전이라면 일정 시간 후 사라지게 함
         if (!isFinalUpgradeDone)
         {
-            StartCoroutine(DisappearAfterArrival());
+            StartCoroutine(_DisappearAfterArrival());
         }
     }
 
-    IEnumerator DisappearAfterArrival()
+    private IEnumerator _DisappearAfterArrival()
     {
         // 목적지에 거의 도착할 때까지 대기
-        while (agent.remainingDistance > 0.2f)
+        while (_agent.remainingDistance > Constants.POINTTWO)
         {
             yield return null;
         }
 
-        yield return new WaitForSeconds(2f); // 감옥 안에서 2초 정도 대기 후
-        // Destroy(gameObject); // 죄수 오브젝트 삭제
+        yield return _waitDuration; // 감옥 안에서 2초 정도 대기 후
     }
 }

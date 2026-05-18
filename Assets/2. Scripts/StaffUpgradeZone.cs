@@ -11,26 +11,26 @@ public class StaffUpgradeZone : MonoBehaviour
     public Transform targetOutput; // 인스펙터에서 ResourceConverter의 OutputPoint 연결
     public Transform targetDesk;   // 인스펙터에서 DeskManager 연결
 
-    private int currentPaid = 0;
-    private bool isUnlocked = false;
+    private int _currentPaid = Constants.ZERO_INTEGER;
+    private bool _isUnlocked = false;
 
     [Header("Payment Speed")]
-    public float payInterval = 0.05f; // 돈이 나가는 속도
-    private float lastPayTime;
+    public float payInterval = Constants.POINTONEFIVE; // 돈이 나가는 속도 
+    private float _lastPayTime;
 
     private void OnTriggerStay(Collider other)
     {
-        if (isUnlocked) return;
+        if (_isUnlocked) return;
 
         if (other.CompareTag("Player"))
         {
             PlayerStacker player = other.GetComponent<PlayerStacker>();
             
             // 결제 주기 확인 (너무 매 프레임 깎이지 않게)
-            if (Time.time >= lastPayTime + payInterval)
+            if (Time.time >= _lastPayTime + payInterval)
             {
                 // 1. 플레이어가 돈을 가지고 있는지 확인 (수치상)
-                if (player.CurrentMoney > 0 && currentPaid < unlockCost)
+                if (player.CurrentMoney > Constants.ZERO_INTEGER && _currentPaid < unlockCost)
                 {
                     // 2. 플레이어의 등에서 실제 돈 오브젝트 하나 추출
                     GameObject moneyObj = player.PopSpecificItem("Money");
@@ -41,49 +41,28 @@ public class StaffUpgradeZone : MonoBehaviour
                         
                         // 3. 금액 처리 (돈 하나당 가치 설정, 예: 100원)
                         int moneyValue = 100; 
-                        currentPaid += moneyValue;
+                        _currentPaid += moneyValue;
                         player.CurrentMoney -= moneyValue; // 프로퍼티를 통해 UI 자동 갱신
 
                         // 4. UI 업데이트
                         if (zoneUI != null)
-                            zoneUI.UpdateUI("HIRE STAFF", unlockCost - currentPaid);
+                            zoneUI.UpdateUI("HIRE STAFF", unlockCost - _currentPaid);
 
-                        lastPayTime = Time.time;
-                        
-                        // 효과음 (선택 사항)
-                        // SoundManager.Instance.PlaySFX(SoundManager.Instance.inputClip);
+                        _lastPayTime = Time.time;
                     }
                 }
 
                 // 5. 결제 완료 체크
-                if (currentPaid >= unlockCost)
+                if (_currentPaid >= unlockCost)
                 {
-                    UnlockStaff();
+                    _UnlockStaff();
                 }
             }
         }
     }
-
-    // void UnlockStaff()
-    // {
-    //     // 1. 직원 생성
-    //     GameObject newStaff = Instantiate(staffPrefab, spawnPoint.position, Quaternion.identity);
-        
-    //     // 2. 직원 스크립트 가져오기
-    //     StaffAI ai = newStaff.GetComponent<StaffAI>();
-        
-    //     // 3. 씬의 오브젝트 정보 넘겨주기
-    //     if (ai != null)
-    //     {
-    //         ai.outputArea = targetOutput;
-    //         ai.deskArea = targetDesk;
-    //     }
-
-    //     gameObject.SetActive(false);
-    // }
-    void UnlockStaff()
+    private void _UnlockStaff()
     {
-        isUnlocked = true;
+        _isUnlocked = true;
         GameObject newStaff = Instantiate(staffPrefab, spawnPoint.position, Quaternion.identity);
         
         // 직원에게 목표 지점 전달

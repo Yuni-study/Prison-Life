@@ -11,10 +11,10 @@ public class UpgradeZone : MonoBehaviour
     public int currentPaid = 0; // 현재까지 지불된 금액
     public ZoneUI zoneUI; // UI 스크립트 연결
 
-    private bool isPlayerInside = false;
+    private bool _isPlayerInside = false;
     private PlayerStacker playerStacker;
 
-    void Start()
+    private void Start()
     {
         // 시작할 때 UI 초기화
         if(zoneUI != null) zoneUI.UpdateUI(currentPaid, upgradeCost);
@@ -24,9 +24,9 @@ public class UpgradeZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            isPlayerInside = true;
+            _isPlayerInside = true;
             playerStacker = other.GetComponent<PlayerStacker>();
-            StartCoroutine(PaymentRoutine());
+            StartCoroutine(_PaymentRoutine());
         }
     }
 
@@ -34,13 +34,13 @@ public class UpgradeZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            isPlayerInside = false;
+            _isPlayerInside = false;
         }
     }
 
-    IEnumerator PaymentRoutine()
+    private IEnumerator _PaymentRoutine()
     {
-        while (isPlayerInside && currentPaid < upgradeCost)
+        while (_isPlayerInside && currentPaid < upgradeCost)
         {
             // 플레이어 뒤에 돈(Money)이 있는지 확인
             GameObject moneyItem = playerStacker.PopSpecificItem("Money");
@@ -52,7 +52,7 @@ public class UpgradeZone : MonoBehaviour
             {
                 playerStacker.AddMoney(-100); // 돈 하나당 100원으로 가정
                 // 돈이 업그레이드 패드로 날아가는 연출
-                StartCoroutine(FlyToZone(moneyItem));
+                StartCoroutine(_FlyToZone(moneyItem));
                 currentPaid += 100; // 돈 하나당 가치 (기획에 따라 수정)
 
                 // UI 업데이트
@@ -60,7 +60,7 @@ public class UpgradeZone : MonoBehaviour
 
                 if (currentPaid >= upgradeCost)
                 {
-                    CompleteUpgrade();
+                    _CompleteUpgrade();
                     yield break;
                 }
             }
@@ -69,10 +69,10 @@ public class UpgradeZone : MonoBehaviour
         }
     }
 
-    IEnumerator FlyToZone(GameObject money)
+    private IEnumerator _FlyToZone(GameObject money)
     {
-        float elapsed = 0f;
-        float duration = 0.3f;
+        float elapsed = Constants.ZERO_FLOAT;
+        float duration = Constants.POINTTHREE;
         Vector3 startPos = money.transform.position;
 
         while (elapsed < duration)
@@ -86,13 +86,13 @@ public class UpgradeZone : MonoBehaviour
         Destroy(money);
     }
 
-    void CompleteUpgrade()
+    private void _CompleteUpgrade()
     {
         // 이제 Manager에서 색상, 범위, 소지량을 한꺼번에 처리합니다.
         UpgradeManager.Instance.ProcessUpgrade();
 
         // 다음 업그레이드를 위한 초기화
-        currentPaid = 0;
+        currentPaid = Constants.ZERO_INTEGER;
         
         // 2단계가 끝났다면 존을 비활성화하거나 텍스트를 "MAX"로 변경
         if (UpgradeManager.Instance.upgradeLevel >= 2)

@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class FloatingText : MonoBehaviour
 {
-    private Transform mainCameraTransform;
+    private Transform _mainCameraTransform;
 
     private void Awake()
     {
         if(Camera.main != null)
         {
-            mainCameraTransform = Camera.main.transform;
+            _mainCameraTransform = Camera.main.transform;
         }
     }
 
     private void LateUpdate()
     {
-        if(mainCameraTransform == null) return;
+        if(_mainCameraTransform == null) return;
 
-        transform.rotation = mainCameraTransform.rotation;
+        transform.rotation = _mainCameraTransform.rotation;
     }
 }

@@ -32,7 +32,7 @@ public class PlayerStacker : MonoBehaviour
     private float _smoothMoveDuration = 0.2f;
 
     private TextMeshPro _maxText;
-    private Coroutine collectionCoroutine;
+    private Coroutine _collectionCoroutine;
 
     [Header("Sway Settings")]
     private float _swayIntensity = 0.05f; // 휘어지는 강도 
@@ -69,28 +69,6 @@ public class PlayerStacker : MonoBehaviour
     private void Start()
     {
         _uiManager = UIManager.Instance;
-    }
-
-    private void Update()
-    {
-        // // 1. 프레임간 위치 변화를 바탕으로 이동 속도 벡터 계산 (X, Z축만 사용)
-        // Vector3 currentPos = transform.position;
-        // Vector3 rawVelocity = (currentPos - _previousPosition) / Time.deltaTime;
-        
-        // // Y축 높이 변화는 무시하고 수평 이동만 계산
-        // rawVelocity.y = Constants.ZERO_FLOAT; 
-
-        // // 속도 변화를 부드럽게 보간 (급격하게 튀는 현상 방지)
-        // _moveVelocity = Vector3.Lerp(_moveVelocity, rawVelocity, Time.deltaTime * _returnSpeed);
-        // _previousPosition = currentPos;
-
-        // Vector3 localVelocity = transform.InverseTransformDirection(_moveVelocity);
-
-        // // 2. 이동 중일 때 실시간으로 아이템들의 포물선 위치 업데이트. 이동 중이며 자원을 획득하고 있지 않을 때. 자원을 가지고 있으며, 
-        // if (TotalCount > Constants.ZERO_INTEGER) 
-        // {
-        //     UpdateAllLayouts(localVelocity);
-        // }
     }
 
     public void SetInertiaSettings(float swayIntensity, float swayMaxAngle, float returnSpeed)
@@ -177,12 +155,12 @@ public class PlayerStacker : MonoBehaviour
                 }
             }
 
-            _anchorCoroutineDict[point] = StartCoroutine(SmoothMove(point, endLocalPos, _smoothMoveDuration));
+            _anchorCoroutineDict[point] = StartCoroutine(_SmoothMove(point, endLocalPos, _smoothMoveDuration));
             // StartCoroutine(SmoothMove(point.gameObject, localPos, 0.2f));
         }
     }
 
-    private IEnumerator SmoothMove(Transform startTransform, Vector3 endLocalPos, float duration)
+    private IEnumerator _SmoothMove(Transform startTransform, Vector3 endLocalPos, float duration)
     {
         if(startTransform == null) yield break;
 
@@ -315,13 +293,13 @@ public class PlayerStacker : MonoBehaviour
             ResourceConverter converter = other.GetComponentInParent<ResourceConverter>();
             if (converter != null)
             {
-                if (collectionCoroutine != null) StopCoroutine(collectionCoroutine);
-                collectionCoroutine = StartCoroutine(CollectRoutine(converter));
+                if (_collectionCoroutine != null) StopCoroutine(_collectionCoroutine);
+                _collectionCoroutine = StartCoroutine(_CollectRoutine(converter));
             }
         }
     }
 
-    IEnumerator CollectRoutine(ResourceConverter converter)
+    private IEnumerator _CollectRoutine(ResourceConverter converter)
     {
         while (true)
         {
@@ -351,16 +329,16 @@ public class PlayerStacker : MonoBehaviour
     public void UpdateAllLayouts(Vector3 localVelocity)
     {
         // 1. 석탄 (중앙)
-        SortZone(_coalList, localVelocity);
+        _SortZone(_coalList, localVelocity);
 
         // 2. 돈 (왼쪽)
-        SortZone(_moneyList, localVelocity);
+        _SortZone(_moneyList, localVelocity);
 
         // 3. 수갑 (오른쪽)
-        SortZone(_handcuffList, localVelocity);
+        _SortZone(_handcuffList, localVelocity);
     }
 
-    private void SortZone(List<GameObject> list, Vector3 localVelocity)
+    private void _SortZone(List<GameObject> list, Vector3 localVelocity)
     {
         for (int i = 0; i < list.Count; i++)
         {
@@ -401,10 +379,10 @@ public class PlayerStacker : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("OutputArea") && collectionCoroutine != null)
+        if (other.CompareTag("OutputArea") && _collectionCoroutine != null)
         {
-            StopCoroutine(collectionCoroutine);
-            collectionCoroutine = null;
+            StopCoroutine(_collectionCoroutine);
+            _collectionCoroutine = null;
         }
     }
 
